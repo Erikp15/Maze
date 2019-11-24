@@ -26,9 +26,15 @@ var maze = [[]];
 // left=4;
 var direction = [[]];
 
-var size=50;
+var maze_selection_gridy = [10,30,100,250];
+var maze_selection_gridx = [20,60,200,500];
+var maze_selection_prob = [0.5,0.5,0.65,0.7];
+var random_maze_empty_prob;
 var mazeysize;
 var mazexsize;
+var maze_selection_button_count=maze_selection_gridx.length;
+var size=50; // auto calculated later
+ 
 
 var queue = [];
 var steps = 0;
@@ -38,9 +44,6 @@ var finaly;
 var prex; 
 var prey;
 var buttonx=250, buttony=250, buttonsizex=200, buttonsizey=50;
-var maze_selection_gridy = [10,20,100,200];
-var maze_selection_gridx = [20,40,200,400];
-var maze_selection_button_count=maze_selection_gridx.length;
 
 // Color can be "red"  "#f01020"
 function setColor(color){  
@@ -113,6 +116,7 @@ function mouseup() {
 			size=Math.floor(1000/mazexsize);
 			maze = new Array(mazeysize).fill(' ').map( () => new Array(mazexsize).fill(' '));
 			direction = new Array(mazeysize).fill(0).map( () => new Array(mazexsize).fill(0));
+			random_maze_empty_prob = maze_selection_prob[button_pressed];
 			state=2;
 		}
 	}
@@ -133,7 +137,7 @@ function mouseup() {
 function generateMaze(){
 	for(var y=0;y<mazeysize;y++){
 		for(var x=0;x<mazexsize;x++){
-			if(Math.random()>=0.5){
+			if(Math.random()>=random_maze_empty_prob){
 				maze[y][x]='*';
 			}else{
 				maze[y][x]=' ';
