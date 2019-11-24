@@ -6,7 +6,8 @@ var state=1;
 // state=4  calculate BFS
 // state=5  display the solution/path
 // state=6  no solution
-const maze = [
+var maze = [[]];
+/*[
     ['*','*','*',' ','*','*','*'],
     ['*',' ','*',' ',' ','*','*'],
     ['*',' ','*','*',' ',' ',' '],
@@ -17,26 +18,17 @@ const maze = [
     ['*',' ','*','*','*','*','*'], 
     ['*',' ','*','*','*','*','*'], 
 ];
+*/
 // wall=0;
 // up=1;
 // right=2;
 // down=3;
 // left=4;
-var direction = [
-    [0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0],
-];
+var direction = [[]];
 
 var size=50;
-var mazeysize = maze.length;
-var mazexsize = maze[0].length;
+var mazeysize;
+var mazexsize;
 
 var queue = [];
 var steps = 0;
@@ -45,7 +37,11 @@ var finalx;
 var finaly;
 var prex; 
 var prey;
-var buttonx=250, buttony=250, buttonsizex=100, buttonsizey=50;
+var buttonx=250, buttony=250, buttonsizex=200, buttonsizey=50;
+var maze_selection_gridy = [10,20,100,200];
+var maze_selection_gridx = [20,40,200,400];
+var maze_selection_button_count=maze_selection_gridx.length;
+
 // Color can be "red"  "#f01020"
 function setColor(color){  
 	context.fillStyle=color;
@@ -79,7 +75,14 @@ function drawMaze(){
 }
 function draw() {
 	if(state==1){
-		createbutton(buttonx,buttony,buttonsizex,buttonsizey);
+		for(var y=0; y<maze_selection_button_count; y++){
+			setColor("grey");
+			createbutton(buttonx,buttony+y*buttonsizey,buttonsizex,buttonsizey*0.9);
+			fontheight=buttonsizey*0.5;
+			context.font = "" + fontheight + "px Arial";
+			setColor("black");
+			drawText("size " + maze_selection_gridx[y] + "x" +maze_selection_gridy[y] ,buttonx,buttony+y*buttonsizey+fontheight+(buttonsizey-fontheight)/2);
+		}
 	}
 	if(state==2){	
 		generateMaze();
@@ -103,7 +106,13 @@ function keyup(key) {
 }
 function mouseup() {
 	if(state==1){
-		if(mouseX>=buttonx && mouseY>=buttony && mouseX<=buttonx+buttonsizex && mouseY<=buttony+buttonsizey){
+		if(mouseX>=buttonx && mouseY>=buttony && mouseX<=buttonx+buttonsizex && mouseY<=buttony+buttonsizey*maze_selection_button_count){
+			var button_pressed = Math.floor((mouseY-buttony)/buttonsizey);
+			mazexsize=maze_selection_gridx[button_pressed];
+			mazeysize=maze_selection_gridy[button_pressed];
+			size=Math.floor(1000/mazexsize);
+			maze = new Array(mazeysize).fill(' ').map( () => new Array(mazexsize).fill(' '));
+			direction = new Array(mazeysize).fill(0).map( () => new Array(mazexsize).fill(0));
 			state=2;
 		}
 	}
